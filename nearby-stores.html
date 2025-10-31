@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nearby Stores | GroceryFinder</title>
+  <link rel="stylesheet" href="style.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    crossorigin=""
+  />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    #map {
+      height: 400px;
+      width: 90%;
+      margin: 30px auto;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .store-card {
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .store-card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+    .store-info h4 {
+      margin: 0;
+      color: #333;
+    }
+    .store-info button {
+      background-color: #009578;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    .store-info button:hover {
+      background-color: #007a63;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-left">
+      <div class="logo" onclick="window.location.href='index1.html'" style="cursor:pointer;">🛒 GroceryFinder</div>
+    </div>
+    <nav class="nav-center">
+      <a href="index1.html"><i class="fa fa-home"></i> Home</a>
+      <a href="#"><i class="fa fa-history"></i> History</a>
+      <a href="#"><i class="fa fa-list"></i> Lists</a>
+    </nav>
+    <div class="nav-right">
+      <div class="profile-icon"><i class="fa fa-user-circle"></i></div>
+    </div>
+  </header>
+
+  <!-- Main Section -->
+  <section class="stores">
+    <h2>Nearby Stores</h2>
+    <p>Fetching grocery stores near your location...</p>
+
+    <div class="search-bar" style="margin-top:25px;">
+      <input type="text" id="storeSearch" placeholder="Search grocery, supermarket, bakery..." />
+      <button id="storeSearchBtn">Search</button>
+    </div>
+
+    <div id="storeResults" class="store-list" style="margin-top:30px;">
+      <p style="text-align:center;color:#777;">Getting your location...</p>
+    </div>
+
+    <!-- Live Map -->
+    <div id="map"></div>
+  </section>
+
+  <footer>
+    <div class="footer-bottom">© 2025 GroceryFinder. All rights reserved.</div>
+  </footer>
+
+  <script>
+    const resultsDiv = document.getElementById("storeResults");
+    const searchBtn = document.getElementById("storeSearchBtn");
+    const searchInput = document.getElementById("storeSearch");
+    let map, userMarker, storeMarkers = [];
+
+    // Initialize Map
+    function initMap(lat, lon) {
+      map = L.map("map").setView([lat, lon], 14);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+      }).addTo(map);
+      userMarker = L.marker([lat, lon])
+        .addTo(map)
+        .bindPopup("📍 You are here")
+        .openPopup();
+    }
+
+    // Fetch nearby stores
+    async function fetchStores(lat, lon, query = "grocery") {
+      resultsDiv.innerHTML = `<p style="text-align:center;color:#777;">Loading stores near you...</p>`;
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        query
+      )}&limit=10&viewbox=${lon - 0.02},${lat + 0.02},${lon + 0.02},${lat - 0.02}`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.length === 0) {
+          resultsDiv.innerHTML =
+            '<p style="text-align:center;color:#999;">No stores found nearby.</p>';
+          return;
+        }
+
+        // Clear old markers
+        storeMarkers.forEach((marker) => map.removeLayer(marker));
+        storeMarkers = [];
+
+        resultsDiv.innerHTML = data
+          .map(
+            (store) => `
+          <div class="store-card">
+            <img src="https://source.unsplash.com/400x250/?grocery,market,store" alt="Store" />
+            <div class="store-info">
+              <h4>${store.display_name.split(",")[0]}</h4>
+              <p>📍 ${store.display_name.split(",").slice(1, 3).join(", ")}</p>
+              <a href="https://www.google.com/maps?q=${store.lat},${store.lon}" target="_blank">
+                <button>View on Map</button>
+              </a>
+            </div>
+          </div>`
+          )
+          .join("");
+
+        // Add markers for each store
+        data.forEach((store) => {
+          const marker = L.marker([store.lat, store.lon])
+            .addTo(map)
+            .bindPopup(
+              `<b>${store.display_name.split(",")[0]}</b><br>${store.display_name
+                .split(",")
+                .slice(1, 3)
+                .join(", ")}`
+            );
+          storeMarkers.push(marker);
+        });
+      } catch (err) {
+        console.error(err);
+        resultsDiv.innerHTML =
+          '<p style="text-align:center;color:red;">Error fetching stores. Try again later.</p>';
+      }
+    }
+
+    // Get User Location or fallback to Vizag
+    function getUserLocation(query = "grocery") {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const { latitude, longitude } = pos.coords;
+            initMap(latitude, longitude);
+            fetchStores(latitude, longitude, query);
+          },
+          (err) => {
+            console.warn("Location access denied, using Vizag fallback.");
+            const vizagLat = 17.6868;
+            const vizagLon = 83.2185;
+            initMap(vizagLat, vizagLon);
+            fetchStores(vizagLat, vizagLon, query);
+            resultsDiv.insertAdjacentHTML(
+              "afterbegin",
+              `<p style="text-align:center;color:#555;">📍 Using Vizag location (enable GPS for exact position)</p>`
+            );
+          }
+        );
+      } else {
+        const vizagLat = 17.6868;
+        const vizagLon = 83.2185;
+        initMap(vizagLat, vizagLon);
+        fetchStores(vizagLat, vizagLon, query);
+        resultsDiv.insertAdjacentHTML(
+          "afterbegin",
+          `<p style="text-align:center;color:#555;">📍 Geolocation not supported, showing Vizag stores</p>`
+        );
+      }
+    }
+
+    // Handle manual search
+    searchBtn.addEventListener("click", () => {
+      const query = searchInput.value.trim() || "grocery";
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) =>
+            fetchStores(pos.coords.latitude, pos.coords.longitude, query),
+          () => {
+            const vizagLat = 17.6868;
+            const vizagLon = 83.2185;
+            fetchStores(vizagLat, vizagLon, query);
+          }
+        );
+      }
+    });
+
+    // Run on page load
+    getUserLocation();
+  </script>
+</body>
+</html>

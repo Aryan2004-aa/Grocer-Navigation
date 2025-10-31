@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Cart | GroceryFinder</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <div class="logo" onclick="window.location.href='index1.html'" style="cursor:pointer;">🛒 GroceryFinder</div>
+    </div>
+    <nav class="nav-center">
+      <a href="index1.html"><i class="fa fa-home"></i> Home</a>
+      <a href="#"><i class="fa fa-history"></i> History</a>
+      <a href="#"><i class="fa fa-list"></i> Lists</a>
+    </nav>
+  </header>
+
+  <section class="stores">
+    <h2>🛒 Your Cart</h2>
+    <div id="cartItems" class="store-list"></div>
+    <div style="text-align:center;margin-top:20px;">
+      <h3 id="totalPrice">Total: ₹0</h3>
+      <button class="add-btn" onclick="proceedToPayment()">Proceed to Payment</button>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-bottom">© 2025 GroceryFinder. All rights reserved.</div>
+  </footer>
+
+  <script>
+    const cartItemsDiv = document.getElementById("cartItems");
+    const totalPriceEl = document.getElementById("totalPrice");
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    function renderCart() {
+      if (cart.length === 0) {
+        cartItemsDiv.innerHTML = "<p style='text-align:center;color:#777;'>Your cart is empty 🛍️</p>";
+        totalPriceEl.innerText = "Total: ₹0";
+        return;
+      }
+
+      let total = 0;
+      cartItemsDiv.innerHTML = cart.map((item, index) => {
+        total += item.price;
+        return `
+          <div class="store-card">
+            <img src="${item.img}" alt="${item.name}">
+            <div class="store-info">
+              <h4>${item.name}</h4>
+              <p>₹${item.price}</p>
+              <button onclick="removeItem(${index})">Remove</button>
+            </div>
+          </div>`;
+      }).join("");
+      totalPriceEl.innerText = `Total: ₹${total}`;
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    function proceedToPayment() {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      window.location.href = "payment.html";
+    }
+
+    renderCart();
+  </script>
+</body>
+</html>

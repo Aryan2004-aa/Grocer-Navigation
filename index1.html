@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GroceryFinder</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-left">
+      <div class="logo">🛒 GroceryFinder</div>
+    </div>
+
+    <nav class="nav-center">
+      <a href="#" class="active"><i class="fa fa-home"></i> Home</a>
+      <a href="#"><i class="fa fa-history"></i> History</a>
+      <a href="#"><i class="fa fa-list"></i> Lists</a>
+    </nav>
+
+    <div class="nav-right">
+      <!-- Redirect to add-item.html -->
+      <button class="add-btn" onclick="window.location.href='add-item.html'">
+        <i class="fa fa-plus"></i> Add Item
+      </button>
+      <div class="profile-icon">
+        <i class="fa fa-user-circle"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h2>Find Your Nearest Grocery Store</h2>
+    <p>Discover local stores, browse fresh arrivals, and get your groceries delivered to your doorstep.</p>
+    <div class="search-box">
+      <input type="text" id="nearbyInput" placeholder="Search store near Vizag...">
+      <button id="nearbyBtn">Search</button>
+    </div>
+
+    <script>
+      document.getElementById('nearbyBtn').addEventListener('click', () => {
+        const query = document.getElementById('nearbyInput').value.trim() || 'grocery';
+        window.location.href = `nearby-stores.html?query=${encodeURIComponent(query)}`;
+      });
+    </script>
+  </section>
+
+  <!-- Category Section -->
+  <section class="categories">
+    <h3>Browse by Category</h3>
+    <div class="category-scroll">
+      <div class="category-item"><img src="https://cdn-icons-png.flaticon.com/512/7655/7655647.png"><p>Fresh Arrivals</p></div>
+      <div class="category-item"><img src="https://cdn-icons-png.flaticon.com/512/2950/2950710.png"><p>Healthcare</p></div>
+      <div class="category-item"><img src="https://cdn-icons-png.flaticon.com/512/921/921075.png"><p>Bakery</p></div>
+      <div class="category-item"><img src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png"><p>Snacks</p></div>
+      <div class="category-item"><img src="https://cdn-icons-png.flaticon.com/512/706/706164.png"><p>Dairy & Eggs</p></div>
+      <div class="category-item"><img src="https://cdn-icons-png.flaticon.com/512/3050/3050120.png"><p>Books</p></div>
+      <div class="category-item"><img src="https://cdn-icons-png.flaticon.com/512/4379/4379987.png"><p>Organic</p></div>
+      <div class="category-item"><img src="https://cdn-icons-png.flaticon.com/512/415/415733.png"><p>Beverages</p></div>
+    </div>
+  </section>
+
+  <!-- Stores -->
+  <section class="stores">
+    <h3>Stores Near You</h3>
+    <div class="store-list">
+      <div class="store-card">
+        <img src="https://source.unsplash.com/400x250/?grocery-store" alt="">
+        <div class="store-info">
+          <h4>NITIN STORE</h4>
+          <p>📍 Chinna Waltair Main Rd</p>
+          <p>📞 1800 102 7382</p>
+          <p>⏰ Closed • Opens 7 am</p>
+          <p>In-store pick-up • Delivery</p>
+          <button>View Store</button>
+        </div>
+      </div>
+
+      <div class="store-card">
+        <img src="https://source.unsplash.com/400x250/?supermarket" alt="">
+        <div class="store-info">
+          <h4>SAFFRON MART</h4>
+          <p>📍 Chinna Waltair Main Rd</p>
+          <p>📞 1800 102 7382</p>
+          <p>⏰ Closed • Opens 11 am</p>
+          <p>In-store pick-up • Delivery</p>
+          <button>View Store</button>
+        </div>
+      </div>
+
+      <div class="store-card">
+        <img src="https://source.unsplash.com/400x250/?store" alt="">
+        <div class="store-info">
+          <h4>SAJAN STORE</h4>
+          <p>📍 Bhagalpur, Bhikhapur Main Rd</p>
+          <p>📞 1800 102 7382</p>
+          <p>⏰ Closed • Opens 7 am</p>
+          <p>In-store pick-up</p>
+          <button>View Store</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>GroceryFinder</h4>
+        <p>Your one-stop destination for finding the best grocery stores near you.</p>
+      </div>
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <p>About Us</p>
+        <p>Contact</p>
+        <p>Privacy Policy</p>
+        <p>Terms of Service</p>
+      </div>
+      <div class="footer-section">
+        <h4>Contact Us</h4>
+        <p>Email: info@groceryfinder.com</p>
+        <p>Phone: 1800 102 7382</p>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 GroceryFinder. All rights reserved.</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment | GroceryFinder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <div class="logo" onclick="window.location.href='index1.html'" style="cursor:pointer;">🛒 GroceryFinder</div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h2>✅ Payment Successful!</h2>
+    <p>Thank you for shopping with GroceryFinder. Your items will be delivered soon.</p>
+    <button onclick="finishOrder()">Back to Home</button>
+  </section>
+
+  <script>
+    function finishOrder() {
+      localStorage.removeItem("cart");
+      window.location.href = "index1.html";
+    }
+  </script>
+
+</body>
+</html>
